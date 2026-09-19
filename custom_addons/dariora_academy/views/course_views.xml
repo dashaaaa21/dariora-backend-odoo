@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+
+    <record id="view_dariora_course_list" model="ir.ui.view">
+        <field name="name">dariora.course.list</field>
+        <field name="model">dariora.course</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="price"/>
+                <field name="is_published"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_dariora_course_form" model="ir.ui.view">
+        <field name="name">dariora.course.form</field>
+        <field name="model">dariora.course</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+
+                    <group>
+                        <field name="name"/>
+                        <field name="price"/>
+                        <field name="is_published"/>
+                    </group>
+
+                    <group>
+                        <field name="description"/>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_dariora_courses" model="ir.actions.act_window">
+        <field name="name">Courses</field>
+        <field name="res_model">dariora.course</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_dariora_academy_root"
+        name="Dariora Academy"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_dariora_courses"
+        name="Courses"
+        parent="menu_dariora_academy_root"
+        action="action_dariora_courses"
+        sequence="10"
+    />
+
+</odoo>
