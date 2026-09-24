@@ -102,4 +102,80 @@ class DarioraAcademyAPI(http.Controller):
             "is_published": course.is_published,
         })
 
+    @http.route(
+        "/api/courses/<int:course_id>",
+        type="http",
+        auth="public",
+        methods=["PUT"],
+        csrf=False,
+    )
+    def update_course(self, course_id):
+        course = request.env["dariora.course"].sudo().browse(course_id)
 
+        if not course.exists():
+            return request.make_json_response(
+                {"error": "Course not found"},
+                status=404,
+            )
+
+        try:
+            data = json.loads(request.httprequest.data)
+        except (ValueError, TypeError):
+            return request.make_json_response(
+                {"error": "Invalid JSON"},
+                status=400,
+            )
+
+        # Update only provided fields
+        update_data = {}
+        if "name" in data:
+            update_data["name"] = data["name"]
+        if "description" in data:
+            update_data["description"] = data["description"]
+        if "price" in data:
+            update_data["price"] = float(data["price"])
+        if "is_published" in data:
+            update_data["is_published"] = data["is_published"]
+
+        try:
+            course.write(update_data)
+            return request.make_json_response({
+                "id": course.id,
+                "name": course.name,
+                "description": course.description,
+                "price": course.price,
+                "is_published": course.is_published,
+            })
+        except Exception as e:
+            return request.make_json_response(
+                {"error": str(e)},
+                status=500,
+            )
+
+    @http.route(
+        "/api/courses/<int:course_id>",
+        type="http",
+        auth="public",
+        methods=["DELETE"],
+        csrf=False,
+    )
+    def delete_course(self, course_id):
+        course = request.env["dariora.course"].sudo().browse(course_id)
+
+        if not course.exists():
+            return request.make_json_response(
+                {"error": "Course not found"},
+                status=404,
+            )
+
+        try:
+            course.unlink()
+            return request.make_json_response(
+                {"message": "Course deleted successfully"},
+                status=200,
+            )
+        except Exception as e:
+            return request.make_json_response(
+                {"error": str(e)},
+                status=500,
+            )
