@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_dariora_course_user,dariora.course.user,model_dariora_course,base.group_user,1,1,1,1
+access_dariora_student_user,dariora.student.user,model_dariora_student,base.group_user,1,1,1,1
+access_dariora_enrollment_user,dariora.enrollment.user,model_dariora_enrollment,base.group_user,1,1,1,1
