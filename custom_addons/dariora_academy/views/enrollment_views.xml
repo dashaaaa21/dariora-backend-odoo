@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+
+    <record id="view_dariora_enrollment_list" model="ir.ui.view">
+        <field name="name">dariora.enrollment.list</field>
+        <field name="model">dariora.enrollment</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="student_id"/>
+                <field name="course_id"/>
+                <field name="enrollment_date"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_dariora_enrollment_form" model="ir.ui.view">
+        <field name="name">dariora.enrollment.form</field>
+        <field name="model">dariora.enrollment</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+
+                    <group>
+                        <field name="student_id"/>
+                        <field name="course_id"/>
+                        <field name="enrollment_date"/>
+                        <field name="status"/>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_dariora_enrollments" model="ir.actions.act_window">
+        <field name="name">Enrollments</field>
+        <field name="res_model">dariora.enrollment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="menu_dariora_enrollments"
+        name="Enrollments"
+        parent="menu_dariora_academy_root"
+        action="action_dariora_enrollments"
+        sequence="30"
+    />
+
+</odoo>

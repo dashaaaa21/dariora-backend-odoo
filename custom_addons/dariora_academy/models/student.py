@@ -3,7 +3,7 @@ from odoo import models, fields
 
 class Student(models.Model):
     _name = "dariora.student"
-    _description = "Student"
+    _description = "Dariora Academy Student"
 
     name = fields.Char(
         string="Name",
@@ -13,6 +13,11 @@ class Student(models.Model):
     email = fields.Char(
         string="Email",
         required=True,
+    )
+
+    active = fields.Boolean(
+        string="Active",
+        default=True,
     )
 
     enrollment_ids = fields.One2many(

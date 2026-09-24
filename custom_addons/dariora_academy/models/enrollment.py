@@ -3,7 +3,7 @@ from odoo import models, fields
 
 class Enrollment(models.Model):
     _name = "dariora.enrollment"
-    _description = "Enrollment"
+    _description = "Dariora Academy Enrollment"
 
     student_id = fields.Many2one(
         "dariora.student",

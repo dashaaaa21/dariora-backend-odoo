@@ -9,6 +9,7 @@
             <list>
                 <field name="name"/>
                 <field name="email"/>
+                <field name="active"/>
             </list>
         </field>
     </record>
@@ -23,16 +24,11 @@
                     <group>
                         <field name="name"/>
                         <field name="email"/>
+                        <field name="active"/>
                     </group>
 
                     <separator string="Enrollments"/>
-                    <field name="enrollment_ids">
-                        <tree>
-                            <field name="course_id"/>
-                            <field name="enrollment_date"/>
-                            <field name="status"/>
-                        </tree>
-                    </field>
+                    <field name="enrollment_ids" nolabel="1"/>
 
                 </sheet>
             </form>
