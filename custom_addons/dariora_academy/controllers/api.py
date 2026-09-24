@@ -31,7 +31,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/courses",
         type="http",
-        auth="public",
+        auth="user",
         methods=["POST"],
         csrf=False,
     )
@@ -105,7 +105,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/courses/<int:course_id>",
         type="http",
-        auth="public",
+        auth="user",
         methods=["PUT"],
         csrf=False,
     )
@@ -155,7 +155,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/courses/<int:course_id>",
         type="http",
-        auth="public",
+        auth="user",
         methods=["DELETE"],
         csrf=False,
     )
@@ -184,7 +184,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/students",
         type="http",
-        auth="public",
+        auth="user",
         methods=["GET"],
         csrf=False,
     )
@@ -205,7 +205,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/students",
         type="http",
-        auth="public",
+        auth="user",
         methods=["POST"],
         csrf=False,
     )
@@ -251,7 +251,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/students/<int:student_id>",
         type="http",
-        auth="public",
+        auth="user",
         methods=["GET"],
         csrf=False,
     )
@@ -273,7 +273,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/students/<int:student_id>",
         type="http",
-        auth="public",
+        auth="user",
         methods=["PUT"],
         csrf=False,
     )
@@ -317,7 +317,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/students/<int:student_id>",
         type="http",
-        auth="public",
+        auth="user",
         methods=["DELETE"],
         csrf=False,
     )
@@ -347,7 +347,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/enrollments",
         type="http",
-        auth="public",
+        auth="user",
         methods=["GET"],
         csrf=False,
     )
@@ -372,7 +372,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/enrollments/<int:enrollment_id>",
         type="http",
-        auth="public",
+        auth="user",
         methods=["GET"],
         csrf=False,
     )
@@ -400,7 +400,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/enrollments",
         type="http",
-        auth="public",
+        auth="user",
         methods=["POST"],
         csrf=False,
     )
@@ -474,7 +474,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/enrollments/<int:enrollment_id>",
         type="http",
-        auth="public",
+        auth="user",
         methods=["PUT"],
         csrf=False,
     )
@@ -518,7 +518,7 @@ class DarioraAcademyAPI(http.Controller):
     @http.route(
         "/api/enrollments/<int:enrollment_id>",
         type="http",
-        auth="public",
+        auth="user",
         methods=["DELETE"],
         csrf=False,
     )
