@@ -3,7 +3,82 @@ from odoo.http import request
 import json
 
 
+def cors_response(data, status=200, headers=None):
+    """Create JSON response with CORS headers"""
+    response = request.make_json_response(data, status=status, headers=headers)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    response.headers['Access-Control-Max-Age'] = '3600'
+    return response
+
+
 class DarioraAcademyAPI(http.Controller):
+
+    # CORS Preflight for Courses
+    @http.route(
+        "/api/courses",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_courses(self):
+        return cors_response({})
+
+    @http.route(
+        "/api/courses/<int:course_id>",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_course_id(self, course_id):
+        return cors_response({})
+
+    # CORS Preflight for Students
+    @http.route(
+        "/api/students",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_students(self):
+        return cors_response({})
+
+    @http.route(
+        "/api/students/<int:student_id>",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_student_id(self, student_id):
+        return cors_response({})
+
+    # CORS Preflight for Enrollments
+    @http.route(
+        "/api/enrollments",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_enrollments(self):
+        return cors_response({})
+
+    @http.route(
+        "/api/enrollments/<int:enrollment_id>",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_enrollment_id(self, enrollment_id):
+        return cors_response({})
+
+    # COURSES
 
     @http.route(
         "/api/courses",
@@ -26,7 +101,7 @@ class DarioraAcademyAPI(http.Controller):
                 "is_published": course.is_published,
             })
 
-        return request.make_json_response(result)
+        return cors_response(result)
 
     @http.route(
         "/api/courses",
@@ -39,20 +114,20 @@ class DarioraAcademyAPI(http.Controller):
         try:
             data = json.loads(request.httprequest.data)
         except (ValueError, TypeError):
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Invalid JSON"},
                 status=400,
             )
 
         # Validation
         if not data.get("name"):
-            return request.make_json_response(
+            return cors_response(
                 {"error": "name is required"},
                 status=400,
             )
 
         if "price" not in data:
-            return request.make_json_response(
+            return cors_response(
                 {"error": "price is required"},
                 status=400,
             )
@@ -65,7 +140,7 @@ class DarioraAcademyAPI(http.Controller):
                 "is_published": data.get("is_published", False),
             })
 
-            return request.make_json_response({
+            return cors_response({
                 "id": course.id,
                 "name": course.name,
                 "description": course.description,
@@ -73,7 +148,7 @@ class DarioraAcademyAPI(http.Controller):
                 "is_published": course.is_published,
             }, status=201)
         except Exception as e:
-            return request.make_json_response(
+            return cors_response(
                 {"error": str(e)},
                 status=500,
             )
@@ -89,12 +164,12 @@ class DarioraAcademyAPI(http.Controller):
         course = request.env["dariora.course"].sudo().browse(course_id)
 
         if not course.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Course not found"},
                 status=404,
             )
 
-        return request.make_json_response({
+        return cors_response({
             "id": course.id,
             "name": course.name,
             "description": course.description,
@@ -113,7 +188,7 @@ class DarioraAcademyAPI(http.Controller):
         course = request.env["dariora.course"].sudo().browse(course_id)
 
         if not course.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Course not found"},
                 status=404,
             )
@@ -121,7 +196,7 @@ class DarioraAcademyAPI(http.Controller):
         try:
             data = json.loads(request.httprequest.data)
         except (ValueError, TypeError):
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Invalid JSON"},
                 status=400,
             )
@@ -139,7 +214,7 @@ class DarioraAcademyAPI(http.Controller):
 
         try:
             course.write(update_data)
-            return request.make_json_response({
+            return cors_response({
                 "id": course.id,
                 "name": course.name,
                 "description": course.description,
@@ -147,7 +222,7 @@ class DarioraAcademyAPI(http.Controller):
                 "is_published": course.is_published,
             })
         except Exception as e:
-            return request.make_json_response(
+            return cors_response(
                 {"error": str(e)},
                 status=500,
             )
@@ -163,19 +238,19 @@ class DarioraAcademyAPI(http.Controller):
         course = request.env["dariora.course"].sudo().browse(course_id)
 
         if not course.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Course not found"},
                 status=404,
             )
 
         try:
             course.unlink()
-            return request.make_json_response(
+            return cors_response(
                 {"message": "Course deleted successfully"},
                 status=200,
             )
         except Exception as e:
-            return request.make_json_response(
+            return cors_response(
                 {"error": str(e)},
                 status=500,
             )
@@ -200,7 +275,7 @@ class DarioraAcademyAPI(http.Controller):
                 "email": student.email,
             })
 
-        return request.make_json_response(result)
+        return cors_response(result)
 
     @http.route(
         "/api/students",
@@ -213,20 +288,20 @@ class DarioraAcademyAPI(http.Controller):
         try:
             data = json.loads(request.httprequest.data)
         except (ValueError, TypeError):
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Invalid JSON"},
                 status=400,
             )
 
         # Validation
         if not data.get("name"):
-            return request.make_json_response(
+            return cors_response(
                 {"error": "name is required"},
                 status=400,
             )
 
         if not data.get("email"):
-            return request.make_json_response(
+            return cors_response(
                 {"error": "email is required"},
                 status=400,
             )
@@ -237,13 +312,13 @@ class DarioraAcademyAPI(http.Controller):
                 "email": data.get("email"),
             })
 
-            return request.make_json_response({
+            return cors_response({
                 "id": student.id,
                 "name": student.name,
                 "email": student.email,
             }, status=201)
         except Exception as e:
-            return request.make_json_response(
+            return cors_response(
                 {"error": str(e)},
                 status=500,
             )
@@ -259,12 +334,12 @@ class DarioraAcademyAPI(http.Controller):
         student = request.env["dariora.student"].sudo().browse(student_id)
 
         if not student.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Student not found"},
                 status=404,
             )
 
-        return request.make_json_response({
+        return cors_response({
             "id": student.id,
             "name": student.name,
             "email": student.email,
@@ -281,7 +356,7 @@ class DarioraAcademyAPI(http.Controller):
         student = request.env["dariora.student"].sudo().browse(student_id)
 
         if not student.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Student not found"},
                 status=404,
             )
@@ -289,7 +364,7 @@ class DarioraAcademyAPI(http.Controller):
         try:
             data = json.loads(request.httprequest.data)
         except (ValueError, TypeError):
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Invalid JSON"},
                 status=400,
             )
@@ -303,13 +378,13 @@ class DarioraAcademyAPI(http.Controller):
 
         try:
             student.write(update_data)
-            return request.make_json_response({
+            return cors_response({
                 "id": student.id,
                 "name": student.name,
                 "email": student.email,
             })
         except Exception as e:
-            return request.make_json_response(
+            return cors_response(
                 {"error": str(e)},
                 status=500,
             )
@@ -325,19 +400,19 @@ class DarioraAcademyAPI(http.Controller):
         student = request.env["dariora.student"].sudo().browse(student_id)
 
         if not student.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Student not found"},
                 status=404,
             )
 
         try:
             student.unlink()
-            return request.make_json_response(
+            return cors_response(
                 {"message": "Student deleted successfully"},
                 status=200,
             )
         except Exception as e:
-            return request.make_json_response(
+            return cors_response(
                 {"error": str(e)},
                 status=500,
             )
@@ -367,7 +442,7 @@ class DarioraAcademyAPI(http.Controller):
                 "status": enrollment.status,
             })
 
-        return request.make_json_response(result)
+        return cors_response(result)
 
     @http.route(
         "/api/enrollments/<int:enrollment_id>",
@@ -382,12 +457,12 @@ class DarioraAcademyAPI(http.Controller):
         )
 
         if not enrollment.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Enrollment not found"},
                 status=404,
             )
 
-        return request.make_json_response({
+        return cors_response({
             "id": enrollment.id,
             "student_id": enrollment.student_id.id,
             "student_name": enrollment.student_id.name,
@@ -411,13 +486,13 @@ class DarioraAcademyAPI(http.Controller):
         course_id = data.get("course_id")
 
         if not student_id:
-            return request.make_json_response(
+            return cors_response(
                 {"error": "student_id is required"},
                 status=400,
             )
 
         if not course_id:
-            return request.make_json_response(
+            return cors_response(
                 {"error": "course_id is required"},
                 status=400,
             )
@@ -425,7 +500,7 @@ class DarioraAcademyAPI(http.Controller):
         student = request.env["dariora.student"].sudo().browse(student_id)
 
         if not student.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Student not found"},
                 status=404,
             )
@@ -433,7 +508,7 @@ class DarioraAcademyAPI(http.Controller):
         course = request.env["dariora.course"].sudo().browse(course_id)
 
         if not course.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Course not found"},
                 status=404,
             )
@@ -445,7 +520,7 @@ class DarioraAcademyAPI(http.Controller):
         ])
 
         if existing_enrollment:
-            return request.make_json_response(
+            return cors_response(
                 {
                     "error": "Student is already enrolled in this course",
                     "enrollment_id": existing_enrollment[0].id,
@@ -458,7 +533,7 @@ class DarioraAcademyAPI(http.Controller):
             "course_id": course.id,
         })
 
-        return request.make_json_response(
+        return cors_response(
             {
                 "id": enrollment.id,
                 "student_id": enrollment.student_id.id,
@@ -487,14 +562,14 @@ class DarioraAcademyAPI(http.Controller):
         )
 
         if not enrollment.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Enrollment not found"},
                 status=404,
             )
 
         if "status" in data:
             if data["status"] not in ["active", "completed"]:
-                return request.make_json_response(
+                return cors_response(
                     {
                         "error": "Status must be either active or completed"
                     },
@@ -505,7 +580,7 @@ class DarioraAcademyAPI(http.Controller):
                 "status": data["status"]
             })
 
-        return request.make_json_response({
+        return cors_response({
             "id": enrollment.id,
             "student_id": enrollment.student_id.id,
             "student_name": enrollment.student_id.name,
@@ -529,19 +604,19 @@ class DarioraAcademyAPI(http.Controller):
         )
 
         if not enrollment.exists():
-            return request.make_json_response(
+            return cors_response(
                 {"error": "Enrollment not found"},
                 status=404,
             )
 
         try:
             enrollment.unlink()
-            return request.make_json_response(
+            return cors_response(
                 {"message": "Enrollment deleted successfully"},
                 status=200,
             )
         except Exception as e:
-            return request.make_json_response(
+            return cors_response(
                 {"error": str(e)},
                 status=500,
             )
@@ -562,7 +637,7 @@ class DarioraAcademyAPI(http.Controller):
         login = data.get("login")
 
         if not login:
-            return request.make_json_response(
+            return cors_response(
                 {"error": "login is required"},
                 status=400,
             )
@@ -576,7 +651,7 @@ class DarioraAcademyAPI(http.Controller):
                 # For demo, we bypass password check
                 request.session.uid = user.id
                 
-                return request.make_json_response({
+                return cors_response({
                     "message": "Login successful",
                     "user": {
                         "id": user.id,
@@ -585,12 +660,12 @@ class DarioraAcademyAPI(http.Controller):
                     },
                 })
             else:
-                return request.make_json_response(
+                return cors_response(
                     {"error": "User not found"},
                     status=401,
                 )
         except Exception as e:
-            return request.make_json_response(
+            return cors_response(
                 {"error": f"Login failed: {str(e)}"},
                 status=500,
             )
@@ -605,7 +680,7 @@ class DarioraAcademyAPI(http.Controller):
     def get_current_user(self):
 
         user = request.env.user
-        return request.make_json_response({
+        return cors_response({
             "id": user.id,
             "name": user.name,
             "login": user.login,
@@ -624,7 +699,7 @@ class DarioraAcademyAPI(http.Controller):
         if request.session.uid:
             request.session.logout()
 
-        return request.make_json_response({
+        return cors_response({
             "message": "Logout successful"
         })
 
@@ -645,4 +720,4 @@ class DarioraAcademyAPI(http.Controller):
                 "name": user.name,
                 "login": user.login,
             })
-        return request.make_json_response(result)
+        return cors_response(result)
