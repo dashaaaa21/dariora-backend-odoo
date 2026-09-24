@@ -438,6 +438,21 @@ class DarioraAcademyAPI(http.Controller):
                 status=404,
             )
 
+        # Check for duplicate enrollment
+        existing_enrollment = request.env["dariora.enrollment"].sudo().search([
+            ("student_id", "=", student.id),
+            ("course_id", "=", course.id),
+        ])
+
+        if existing_enrollment:
+            return request.make_json_response(
+                {
+                    "error": "Student is already enrolled in this course",
+                    "enrollment_id": existing_enrollment[0].id,
+                },
+                status=409,
+            )
+
         enrollment = request.env["dariora.enrollment"].sudo().create({
             "student_id": student.id,
             "course_id": course.id,
