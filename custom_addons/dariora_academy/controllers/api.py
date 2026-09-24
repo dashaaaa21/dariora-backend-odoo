@@ -514,3 +514,34 @@ class DarioraAcademyAPI(http.Controller):
             "enrollment_date": str(enrollment.enrollment_date),
             "status": enrollment.status,
         })
+
+    @http.route(
+        "/api/enrollments/<int:enrollment_id>",
+        type="http",
+        auth="public",
+        methods=["DELETE"],
+        csrf=False,
+    )
+    def delete_enrollment(self, enrollment_id):
+
+        enrollment = request.env["dariora.enrollment"].sudo().browse(
+            enrollment_id
+        )
+
+        if not enrollment.exists():
+            return request.make_json_response(
+                {"error": "Enrollment not found"},
+                status=404,
+            )
+
+        try:
+            enrollment.unlink()
+            return request.make_json_response(
+                {"message": "Enrollment deleted successfully"},
+                status=200,
+            )
+        except Exception as e:
+            return request.make_json_response(
+                {"error": str(e)},
+                status=500,
+            )
