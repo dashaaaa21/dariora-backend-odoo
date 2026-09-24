@@ -341,3 +341,117 @@ class DarioraAcademyAPI(http.Controller):
                 {"error": str(e)},
                 status=500,
             )
+
+    # Enrollment API
+
+    @http.route(
+        "/api/enrollments",
+        type="http",
+        auth="public",
+        methods=["GET"],
+        csrf=False,
+    )
+    def get_enrollments(self):
+        enrollments = request.env["dariora.enrollment"].sudo().search([])
+
+        result = []
+
+        for enrollment in enrollments:
+            result.append({
+                "id": enrollment.id,
+                "student_id": enrollment.student_id.id,
+                "student_name": enrollment.student_id.name,
+                "course_id": enrollment.course_id.id,
+                "course_name": enrollment.course_id.name,
+                "enrollment_date": str(enrollment.enrollment_date),
+                "status": enrollment.status,
+            })
+
+        return request.make_json_response(result)
+
+    @http.route(
+        "/api/enrollments/<int:enrollment_id>",
+        type="http",
+        auth="public",
+        methods=["GET"],
+        csrf=False,
+    )
+    def get_enrollment(self, enrollment_id):
+        enrollment = request.env["dariora.enrollment"].sudo().browse(
+            enrollment_id
+        )
+
+        if not enrollment.exists():
+            return request.make_json_response(
+                {"error": "Enrollment not found"},
+                status=404,
+            )
+
+        return request.make_json_response({
+            "id": enrollment.id,
+            "student_id": enrollment.student_id.id,
+            "student_name": enrollment.student_id.name,
+            "course_id": enrollment.course_id.id,
+            "course_name": enrollment.course_id.name,
+            "enrollment_date": str(enrollment.enrollment_date),
+            "status": enrollment.status,
+        })
+
+    @http.route(
+        "/api/enrollments",
+        type="http",
+        auth="public",
+        methods=["POST"],
+        csrf=False,
+    )
+    def create_enrollment(self):
+        data = request.get_json_data()
+
+        student_id = data.get("student_id")
+        course_id = data.get("course_id")
+
+        if not student_id:
+            return request.make_json_response(
+                {"error": "student_id is required"},
+                status=400,
+            )
+
+        if not course_id:
+            return request.make_json_response(
+                {"error": "course_id is required"},
+                status=400,
+            )
+
+        student = request.env["dariora.student"].sudo().browse(student_id)
+
+        if not student.exists():
+            return request.make_json_response(
+                {"error": "Student not found"},
+                status=404,
+            )
+
+        course = request.env["dariora.course"].sudo().browse(course_id)
+
+        if not course.exists():
+            return request.make_json_response(
+                {"error": "Course not found"},
+                status=404,
+            )
+
+        enrollment = request.env["dariora.enrollment"].sudo().create({
+            "student_id": student.id,
+            "course_id": course.id,
+        })
+
+        return request.make_json_response(
+            {
+                "id": enrollment.id,
+                "student_id": enrollment.student_id.id,
+                "student_name": enrollment.student_id.name,
+                "course_id": enrollment.course_id.id,
+                "course_name": enrollment.course_id.name,
+                "enrollment_date": str(enrollment.enrollment_date),
+                "status": enrollment.status,
+            },
+            status=201,
+        )
