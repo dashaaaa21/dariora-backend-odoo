@@ -470,3 +470,47 @@ class DarioraAcademyAPI(http.Controller):
             },
             status=201,
         )
+
+    @http.route(
+        "/api/enrollments/<int:enrollment_id>",
+        type="http",
+        auth="public",
+        methods=["PUT"],
+        csrf=False,
+    )
+    def update_enrollment(self, enrollment_id):
+
+        data = request.get_json_data()
+
+        enrollment = request.env["dariora.enrollment"].sudo().browse(
+            enrollment_id
+        )
+
+        if not enrollment.exists():
+            return request.make_json_response(
+                {"error": "Enrollment not found"},
+                status=404,
+            )
+
+        if "status" in data:
+            if data["status"] not in ["active", "completed"]:
+                return request.make_json_response(
+                    {
+                        "error": "Status must be either active or completed"
+                    },
+                    status=400,
+                )
+
+            enrollment.write({
+                "status": data["status"]
+            })
+
+        return request.make_json_response({
+            "id": enrollment.id,
+            "student_id": enrollment.student_id.id,
+            "student_name": enrollment.student_id.name,
+            "course_id": enrollment.course_id.id,
+            "course_name": enrollment.course_id.name,
+            "enrollment_date": str(enrollment.enrollment_date),
+            "status": enrollment.status,
+        })
