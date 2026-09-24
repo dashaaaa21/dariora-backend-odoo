@@ -545,3 +545,104 @@ class DarioraAcademyAPI(http.Controller):
                 {"error": str(e)},
                 status=500,
             )
+
+    # Authentication API
+
+    @http.route(
+        "/api/login",
+        type="http",
+        auth="none",
+        methods=["POST"],
+        csrf=False,
+    )
+    def login(self):
+
+        data = request.get_json_data()
+
+        login = data.get("login")
+
+        if not login:
+            return request.make_json_response(
+                {"error": "login is required"},
+                status=400,
+            )
+
+        try:
+            # For demo: allow login with any password (demo purposes)
+            user = request.env['res.users'].sudo().search([('login', '=', login)], limit=1)
+            
+            if user:
+                # Set the session properly using Odoo's method
+                # For demo, we bypass password check
+                request.session.uid = user.id
+                
+                return request.make_json_response({
+                    "message": "Login successful",
+                    "user": {
+                        "id": user.id,
+                        "name": user.name,
+                        "login": user.login,
+                    },
+                })
+            else:
+                return request.make_json_response(
+                    {"error": "User not found"},
+                    status=401,
+                )
+        except Exception as e:
+            return request.make_json_response(
+                {"error": f"Login failed: {str(e)}"},
+                status=500,
+            )
+
+    @http.route(
+        "/api/me",
+        type="http",
+        auth="user",
+        methods=["GET"],
+        csrf=False,
+    )
+    def get_current_user(self):
+
+        user = request.env.user
+        return request.make_json_response({
+            "id": user.id,
+            "name": user.name,
+            "login": user.login,
+            "email": user.email,
+        })
+
+    @http.route(
+        "/api/logout",
+        type="http",
+        auth="none",
+        methods=["POST"],
+        csrf=False,
+    )
+    def logout(self):
+
+        if request.session.uid:
+            request.session.logout()
+
+        return request.make_json_response({
+            "message": "Logout successful"
+        })
+
+    @http.route(
+        "/api/debug/users",
+        type="http",
+        auth="none",
+        methods=["GET"],
+        csrf=False,
+    )
+    def debug_users(self):
+        """Debug endpoint to list all users"""
+        users = request.env['res.users'].sudo().search([])
+        result = []
+        for user in users:
+            result.append({
+                "id": user.id,
+                "name": user.name,
+                "login": user.login,
+            })
+        return request.make_json_response(result)
