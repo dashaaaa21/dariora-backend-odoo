@@ -623,6 +623,37 @@ class DarioraAcademyAPI(http.Controller):
 
     # Authentication API
 
+    # CORS Preflight for Auth
+    @http.route(
+        "/api/login",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_login(self):
+        return cors_response({})
+
+    @http.route(
+        "/api/me",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_me(self):
+        return cors_response({})
+
+    @http.route(
+        "/api/logout",
+        type="http",
+        auth="public",
+        methods=["OPTIONS"],
+        csrf=False,
+    )
+    def options_logout(self):
+        return cors_response({})
+
     @http.route(
         "/api/login",
         type="http",
