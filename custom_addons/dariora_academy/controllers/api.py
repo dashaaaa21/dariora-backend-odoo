@@ -375,6 +375,8 @@ class DarioraAcademyAPI(http.Controller):
             update_data["name"] = data["name"]
         if "email" in data:
             update_data["email"] = data["email"]
+        if "active" in data:
+            update_data["active"] = data["active"]
 
         try:
             student.write(update_data)
@@ -382,6 +384,7 @@ class DarioraAcademyAPI(http.Controller):
                 "id": student.id,
                 "name": student.name,
                 "email": student.email,
+                "active": student.active,
             })
         except Exception as e:
             return cors_response(
